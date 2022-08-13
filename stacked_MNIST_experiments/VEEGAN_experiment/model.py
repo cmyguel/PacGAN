@@ -192,32 +192,54 @@ class DCGAN(object):
                 for i in range(self.packing_num):
                     feed_dict_z[self.z[i]] = np.random.uniform(-1, 1, [config.batch_size, self.z_dim]).astype(np.float32)
                 
+                def make_feed_dict(other:dict, feed_dict_z:dict):
+                    if other:
+                        feed_dict = dict(other)
+                    else:
+                        feed_dict = {}
+                    feed_dict.update(feed_dict_z)
+                    return feed_dict
+                
                 # Update D network
                 _, summary_str = self.sess.run([d_optim, self.d_sum],
-                    feed_dict=dict({ 
-                        self.inputs: batch_images, 
-                        #self.z: batch_z 
-                    }, **feed_dict_z))
+                    feed_dict = make_feed_dict({self.inputs: batch_images}, feed_dict_z)
+                )
+
+                    # feed_dict=dict({ 
+                    #     self.inputs: batch_images, 
+                    #     ##self.z: batch_z 
+                    # }, **feed_dict_z))
+                    
 
                 # Update G network
                 _, summary_str = self.sess.run([g_optim, self.g_sum],
-                    feed_dict=dict({ 
-                        #self.z: batch_z 
-                    }, **feed_dict_z))
+                    feed_dict = make_feed_dict({}, feed_dict_z)
+                )
+                    # feed_dict=dict({ 
+                    #     #self.z: batch_z 
+                    # }, **feed_dict_z))
 
                 # Run g_optim twice to make sure that d_loss does not go to zero (different from paper)
                 _, summary_str = self.sess.run([g_optim, self.g_sum],
-                    feed_dict=dict({ 
-                        #self.z: batch_z 
-                    }, **feed_dict_z))
+                    feed_dict = make_feed_dict({}, feed_dict_z)
+                )
+                    # feed_dict=dict({ 
+                    #     #self.z: batch_z 
+                    # }, **feed_dict_z))
               
-                errD_fake = self.d_loss_fake.eval(dict({ 
-                    #self.z: batch_z 
-                }, **feed_dict_z))
+                errD_fake = self.d_loss_fake.eval(
+                     make_feed_dict({}, feed_dict_z)
+                )
+                #     dict({ 
+                #     #self.z: batch_z 
+                # }, **feed_dict_z))
                 errD_real = self.d_loss_real.eval({ self.inputs: batch_images })
-                errG = self.g_loss.eval(dict({
-                    #self.z: batch_z
-                }, **feed_dict_z))
+                errG = self.g_loss.eval(
+                    feed_dict = make_feed_dict({}, feed_dict_z)
+                )
+                #     dict({
+                #     #self.z: batch_z
+                # }, **feed_dict_z))
 
                 counter += 1
                 print("Epoch: [%2d] [%4d/%4d] time: %4.4f, d_loss: %.8f, g_loss: %.8f" \
@@ -228,10 +250,12 @@ class DCGAN(object):
                     try:
                         samples, d_loss, g_loss = self.sess.run(
                             [self.sampler, self.d_loss, self.g_loss],
-                            feed_dict=dict({
-                                #self.z: sample_z,
-                                self.inputs: sample_inputs,
-                            }, **feed_dict_z))
+                            feed_dict = make_feed_dict({self.inputs: sample_inputs}, feed_dict_z)
+                        )
+                            # feed_dict=dict({
+                            #     #self.z: sample_z,
+                            #     self.inputs: sample_inputs,
+                            # }, **feed_dict_z))
                         save_images(samples, image_manifold_size(samples.shape[0]),
                             '{}/train_{:02d}_{:04d}.png'.format(config.sample_dir, epoch, idx))
                         print("[Sample] d_loss: %.8f, g_loss: %.8f" % (d_loss, g_loss)) 
