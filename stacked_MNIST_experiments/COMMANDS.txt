@@ -1,0 +1,17 @@
+python3.8
+
+pip install pipreqs
+pipreqs .
+
+# from folder which contains the cloned GPUTaskScheduler repo (mode_collapse/)
+pip install -e GPUTaskScheduler
+
+# install requirements at PacGAN\stacked_MNIST_experiments
+pip install -r requirements.txt
+
+# download data
+celebA: drive.google.com/file/d/0B7EVK8r0v71pZjFTYXZWM3FlRnM
+mnist: follow repo instructions. All dependencies are not required for download.
+
+# tensorflow gpu 
+install cuda and cuDNN compatible versions: https://stackoverflow.com/questions/50622525/which-tensorflow-and-cuda-version-combinations-are-compatible
