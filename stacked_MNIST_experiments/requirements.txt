@@ -4,7 +4,7 @@ keras==2.9.0
 moviepy==1.0.3
 numpy==1.18.*
 requests==2.28.1
-scipy==1.7.*
+scipy<1.2.0
 six==1.16.0
 tensorflow==1.*
 tensorflow-gpu==1.*
