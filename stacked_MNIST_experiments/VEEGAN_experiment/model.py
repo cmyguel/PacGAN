@@ -278,7 +278,7 @@ class DCGAN(object):
             dect2 = self.evaluate(np.reshape(samples[:, :, :, 2], (self.batch_size, self.output_height, self.output_width, 1)))
             
             new_results = zip(dect0, dect1, dect2)
-            if len(results) + len(new_results) > self.num_test_sample:
+            if len(results) + len(dect0) > self.num_test_sample:
                 results.extend(new_results[0 : (self.num_test_sample - len(results))])
             else:
                 results.extend(new_results)
