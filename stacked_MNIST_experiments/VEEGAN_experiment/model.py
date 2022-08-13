@@ -151,7 +151,7 @@ class DCGAN(object):
         if config.log_metrics:
             self.metric_path = os.path.join(config.work_dir, "metrics.csv")
             self.field_names = ["epoch", "mode coverage", "KL", "details"]
-            with open(self.metric_path, "wb") as csv_file:
+            with open(self.metric_path, "w") as csv_file:
                 writer = csv.DictWriter(csv_file, fieldnames=self.field_names)
                 writer.writeheader()
   
